@@ -1,7 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:yes_no_app_jonathan_4sa/presentation/widgets/chat/her_message_bubble.dart';
-import 'package:yes_no_app_jonathan_4sa/presentation/widgets/chat/my_message_bubble.dart';
-import 'package:yes_no_app_jonathan_4sa/presentation/widgets/shared/message_field_box.dart';
+import "package:flutter/material.dart";
+import "package:provider/provider.dart";
+import "package:yes_no_app_jonathan_4sa/domain/entities/message.dart";
+import "package:yes_no_app_jonathan_4sa/presentation/providers/chat_provider.dart";
+import "package:yes_no_app_jonathan_4sa/presentation/widgets/chat/her_message_bubble.dart";
+import "package:yes_no_app_jonathan_4sa/presentation/widgets/chat/my_message_bubble.dart";
+import "package:yes_no_app_jonathan_4sa/presentation/widgets/shared/message_field_box.dart";
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({super.key});
@@ -24,9 +27,12 @@ class ChatScreen extends StatelessWidget {
 }
 
 class _ChatView extends StatelessWidget {
+  
 
   @override
   Widget build(BuildContext context) {
+    //Pedirle al widget que esté pendiente de todos los cambios
+    final chatProvider = context.watch<ChatProvider>();
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -34,15 +40,22 @@ class _ChatView extends StatelessWidget {
           children: [
             Expanded(
               child:ListView.builder(
-                itemCount: 10,
+                 itemCount: chatProvider.messageList.length,
                 itemBuilder: (context, index) {
-                  return ( index % 2 == 0)
-                  ? const HerMessageBubble()
-                  : const MyMessageBubble();
+                  //Instancia del message que sabrá de quién es el mensaje
+                  final message = chatProvider.messageList[index];
+                  return (message.fromwho == FromWho.hers)
+                  ? HerMessageBubble(message: message)
+                  : MyMessageBubble(
+                    message: message
+                    );
               },) ),
 
             /// Caja de texto de mensajes
-            const MessageFieldBox(),
+            MessageFieldBox(
+              //Una vez que tenga el valor cambiado, enviap
+              onValue: (value) => chatProvider.sendMessage(value),
+              ),
           ],
         ),
       ),
