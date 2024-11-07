@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yes_no_app_jonathan_4sa/config/helpers/get_yes_no_answer.dart';
 import '../../domain/entities/message.dart';
 import 'dart:developer' as developer;
 
@@ -16,6 +17,11 @@ class ChatProvider extends ChangeNotifier{
   ];
   //Controlador para manejar la posición del scroll
   final ScrollController chatScrollController = ScrollController();
+
+  //Instancia de la clase GetYesNoAnswer
+  final getYesNoAnswer = GetYesNoAnswer();
+
+
   //Enviar un mensaje
   Future<void> sendMessage(String text) async {
   // Verifica si el texto está vacío antes de enviar el mensaje
@@ -24,8 +30,11 @@ class ChatProvider extends ChangeNotifier{
     final newMessage = Message(text: text, fromwho: FromWho.me);
     //Agrega un elemento a la Lista "messageList"
     messageList.add(newMessage);
-    // Usa developer.log para registrar la cantidad de mensajes en la consola
+    if (text.endsWith("?")) {
+      herReply();
+      // Usa developer.log para registrar la cantidad de mensajes en la consola
     developer.log("Cantidad de mensajes: ${messageList.length}", name: 'ChatProvider');
+    }
     //Notifica si algo de provider cambió para que se guarde en el estado
     notifyListeners();
     //Mueve el scroll
@@ -47,5 +56,16 @@ class ChatProvider extends ChangeNotifier{
         //"Rebote" al final de la animación 
         curve: Curves.easeOut);
       }
-    }  
+    }
+    
+      Future<void> herReply() async{
+        //Obtener el mensaje de la petición
+        final herMessage = await getYesNoAnswer.getAnswer();
+        //Añadir el mensaje de mi crush a la lista
+        messageList.add(herMessage);
+        //Notifica si algo de provider cambió para el estado
+        notifyListeners();
+        //Mueve el scroll hasta el último mensaje recibido
+        moveScrollToBottom();
+      }  
 }
