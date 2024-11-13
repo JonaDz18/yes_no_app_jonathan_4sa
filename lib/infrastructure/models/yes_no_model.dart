@@ -9,33 +9,39 @@
 import 'package:yes_no_app_jonathan_4sa/domain/entities/message.dart';
 
 class YesNoModel {
-    final String answer;
-    final bool forced;
-    final String image;
+  //Atributos de clase
+  final String answer;
+  final bool forced;
+  final String image;
 
-    YesNoModel({
-        required this.answer,
-        required this.forced,
-        required this.image,
-    });
+  YesNoModel({
+    required this.answer,
+    required this.forced,
+    required this.image,
+  });
 
-    factory YesNoModel.fromJsonMap(Map<String, dynamic> json) => YesNoModel(
+  //factoryno necesariamente crea una nueva instancia
+  factory YesNoModel.fromJsonMap(Map<String, dynamic> json) => YesNoModel(
         answer: json["answer"],
         forced: json["forced"],
         image: json["image"],
       );
 
-    Message toMessageEntity() => Message(
+  Map<String, dynamic> toJson() => {
+        "answer": answer,
+        "forced": forced,
+        "image": image,
+      };
+
+  Message toMessageEntity() => Message(
       //Condicional ternario para darle valor a los mensajes
-      text: answer =="Yes"
-          ? "Sí"
-          : answer == "no" 
+      text: answer == "yes"
+          ? "Yes"
+          : answer == "no"
               ? "No"
               : "Quizás",
-      //Siempre va a ser de ella
-      fromwho: FromWho.hers,
+      //Siempre va a ser ella
+      fromWho: FromWho.hers,
       //Será el gif
       imageUrl: image);
-
-
 }

@@ -8,8 +8,8 @@ import 'dart:developer' as developer;
 class ChatProvider extends ChangeNotifier{
 
   List<Message> messageList = [
-    Message(text: "Hola Ader", fromwho: FromWho.me),
-    Message(text: "¿Lloras porque reprobaste tópicos?", fromwho: FromWho.me)
+    Message(text: "Hola Ader", fromWho: FromWho.me),
+    Message(text: "¿Lloras porque reprobaste tópicos?", fromWho: FromWho.me)
 
 
     
@@ -21,13 +21,18 @@ class ChatProvider extends ChangeNotifier{
   //Instancia de la clase GetYesNoAnswer
   final getYesNoAnswer = GetYesNoAnswer();
 
+  //Variable para la última hora de mensaje
+  DateTime lastMessageTime = DateTime.now();
+
 
   //Enviar un mensaje
   Future<void> sendMessage(String text) async {
   // Verifica si el texto está vacío antes de enviar el mensaje
     if (text.trim().isEmpty) return;
+    //Avanza unos minutos en la última hora del mensaje
+    lastMessageTime = lastMessageTime.add(const Duration(minutes: 1));
     //El mensaje siempre va a ser "me" porque yo lo envío
-    final newMessage = Message(text: text, fromwho: FromWho.me);
+    final newMessage = Message(text: text, fromWho: FromWho.me);
     //Agrega un elemento a la Lista "messageList"
     messageList.add(newMessage);
     if (text.endsWith("?")) {
@@ -59,6 +64,7 @@ class ChatProvider extends ChangeNotifier{
     }
     
       Future<void> herReply() async{
+        await Future.delayed(const Duration(seconds: 2)); //Retardo de 2 segundos
         //Obtener el mensaje de la petición
         final herMessage = await getYesNoAnswer.getAnswer();
         //Añadir el mensaje de mi crush a la lista
